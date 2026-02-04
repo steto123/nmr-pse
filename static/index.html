@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktives Periodensystem der Elemente</title>
+    <meta name="description"
+        content="Ein interaktives Periodensystem der Elemente, basierend auf aktuellen Daten aus einer Excel-Datei.">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="header-content">
+                <h1>Periodensystem der Elemente</h1>
+                <div class="controls">
+                    <input type="text" id="element-search" placeholder="Element suchen (Name oder Symbol)...">
+                    <div class="stats">
+                        <span id="element-count">0</span> Elemente geladen
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="ptable-grid" class="periodic-grid">
+                <!-- Elements will be generated dynamically -->
+            </div>
+
+            <aside id="details-panel" class="hidden">
+                <button id="close-details">&times;</button>
+                <div class="details-content">
+                    <div class="element-header">
+                        <div class="atomic-number" id="detail-atomnummer"></div>
+                        <div class="symbol" id="detail-symbol"></div>
+                        <div class="name" id="detail-name"></div>
+                    </div>
+                    <div class="properties-grid" id="properties-grid">
+                        <!-- Properties will be injected here -->
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <footer>
+            <p>Datenquellen:</p>
+            <ul>
+                <li><a href="https://publications.iupac.org/pac/2001/pdf/7311x1795.pdf">Pure Appl. Chem., Vol. 73, No.
+                        11, pp. 1795–1818, 2001</a></li>
+                <li>Bruker Almanac 2012</li>
+                <li><a
+                        href="https://github.com/harirakul/chemlib/tree/master/chemlib/resources">https://github.com/harirakul/chemlib/tree/master/chemlib/resources</a>
+                </li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

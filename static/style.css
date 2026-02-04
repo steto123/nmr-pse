@@ -1,0 +1,366 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --panel-bg: rgba(15, 23, 42, 0.9);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #38bdf8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glass-blur: 12px;
+    --transition-speed: 0.3s;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    padding: 2rem 4rem;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0) 100%);
+    z-index: 10;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#element-search {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    width: 350px;
+    font-size: 1rem;
+    outline: none;
+    transition: all var(--transition-speed);
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+#element-search:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+}
+
+.stats {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+main {
+    flex: 1;
+    position: relative;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#ptable-grid {
+    display: grid;
+    grid-template-columns: repeat(18, 1fr);
+    grid-auto-rows: minmax(80px, auto);
+    gap: 8px;
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.grid-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.element-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+.element-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.element-card .atomic-num {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.element-card .symbol {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.element-card .name {
+    font-size: 0.7rem;
+    text-align: center;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.isotope-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.6rem;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+/* Colors */
+.element-card.type-metall {
+    background: rgba(14, 165, 233, 0.2);
+    border-color: #38bdf8;
+}
+
+.element-card.type-nichtmetall {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #f87171;
+}
+
+.element-card.type-halbmetall {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #4ade80;
+}
+
+.element-card.type-metall .symbol {
+    color: #7dd3fc;
+}
+
+.element-card.type-nichtmetall .symbol {
+    color: #fca5a5;
+}
+
+.element-card.type-halbmetall .symbol {
+    color: #86efac;
+}
+
+/* Details Panel */
+#details-panel {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    bottom: 2rem;
+    width: 400px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    z-index: 100;
+    padding: 2.5rem;
+    box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+    transition: transform var(--transition-speed) ease;
+    overflow-y: auto;
+}
+
+#details-panel.hidden {
+    transform: translateX(120%);
+}
+
+#close-details {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.element-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.atomic-number {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+}
+
+.symbol {
+    font-size: 5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: var(--accent-color);
+}
+
+.name {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.property-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.property-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.property-value {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+/* NMR Styles */
+.nmr-section {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.nmr-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.nmr-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.nmr-isotope-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.nmr-isotope-header {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.nmr-props {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.5);
+}
+
+footer p {
+    margin-bottom: 1rem;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+footer a {
+    color: #f97316;
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    border-bottom: 1px solid transparent;
+}
+
+footer a:hover {
+    color: #fdba74;
+    border-bottom-color: #fdba74;
+}
+
+/* Highlight search matches */
+.search-highlight .cell {
+    stroke: #fbbf24 !important;
+    stroke-width: 3 !important;
+    filter: drop-shadow(0 0 5px #fbbf24);
+}
+
+.dimmed,
+.category-dimmed {
+    opacity: 0.15;
+    filter: grayscale(0.5);
+}
+
+.category-highlight .cell {
+    stroke: var(--accent-color) !important;
+    stroke-width: 3 !important;
+    filter: drop-shadow(0 0 8px var(--accent-color));
+}
