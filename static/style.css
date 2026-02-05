@@ -42,6 +42,8 @@ header {
     align-items: center;
     max-width: 1600px;
     margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 h1 {
@@ -58,6 +60,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 #element-search {
@@ -83,12 +86,45 @@ h1 {
     color: var(--text-secondary);
 }
 
+.lang-switcher {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--card-bg);
+    padding: 0.25rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border-color);
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all var(--transition-speed);
+}
+
+.lang-btn.active {
+    background: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.lang-btn:hover:not(.active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
 main {
     flex: 1;
     position: relative;
-    padding: 0 2rem;
+    padding: 0 4rem;
+    /* Increased side padding */
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Shifted from center to left */
     align-items: flex-start;
 }
 
@@ -97,7 +133,8 @@ main {
     grid-template-columns: repeat(18, 1fr);
     grid-auto-rows: minmax(80px, auto);
     gap: 8px;
-    margin: 2rem auto;
+    margin: 2.5rem 0;
+    /* Removed 'auto' to keep it left-aligned */
     width: 100%;
     max-width: 1400px;
 }

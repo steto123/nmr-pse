@@ -1,4 +1,6 @@
 let elementsData = [];
+let translations = {};
+let currentLang = 'de';
 
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
@@ -6,18 +8,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initApp() {
     try {
-        const response = await fetch('/api/elements');
-        elementsData = await response.json();
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        elementsData = data.elements;
+        translations = data.translations;
 
         const countDisplay = document.getElementById('element-count');
         countDisplay.textContent = elementsData.length;
 
         renderApp(elementsData);
         setupSearch();
+        setupLanguageSwitcher();
+        updateUI();
 
     } catch (error) {
         console.error('Error initializing app:', error);
     }
+}
+
+function t(text) {
+    if (currentLang === 'de') return text;
+    return translations[text] || text;
+}
+
+function updateUI() {
+    // Update static translations
+    const uiStrings = {
+        'de': {
+            'search_placeholder': 'Element suchen (Name oder Symbol)...',
+            'elements_loaded': 'Elemente geladen',
+            'nmr_active_isotopes': 'NMR Aktive Isotope',
+            'title': 'Periodensystem der Elemente'
+        },
+        'en': {
+            'search_placeholder': 'Search element (Name or Symbol)...',
+            'elements_loaded': 'Elements loaded',
+            'nmr_active_isotopes': 'NMR Active Isotopes',
+            'title': 'Periodic Table of Elements'
+        }
+    };
+
+    const strings = uiStrings[currentLang];
+
+    document.querySelector('h1').textContent = strings.title;
+    document.getElementById('element-search').placeholder = strings.search_placeholder;
+    document.querySelector('[data-i18n="elements_loaded"]').textContent = strings.elements_loaded;
+
+    // Re-render the grid to update element names
+    renderApp(elementsData);
+}
+
+function setupLanguageSwitcher() {
+    const btns = document.querySelectorAll('.lang-btn');
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentLang = btn.dataset.lang;
+            updateUI();
+        });
+    });
 }
 
 function renderApp(elements) {
@@ -60,10 +110,12 @@ function renderApp(elements) {
         if (el.Nichtmetall) card.classList.add('type-nichtmetall');
         if (el.Halbmetall) card.classList.add('type-halbmetall');
 
+        const elementName = currentLang === 'de' ? el.Element : t(el.Element);
+
         card.innerHTML = `
             <div class="atomic-num">${el.Atomnummer}</div>
             <div class="symbol">${el.Symbol}</div>
-            <div class="name">${el.Element}</div>
+            <div class="name">${elementName}</div>
             ${el.NMR_Daten ? '<div class="isotope-badge">NMR</div>' : ''}
         `;
 
@@ -81,7 +133,7 @@ function showDetails(atomicNumber) {
 
     document.getElementById('detail-atomnummer').textContent = el.Atomnummer;
     document.getElementById('detail-symbol').textContent = el.Symbol;
-    document.getElementById('detail-name').textContent = el.Element;
+    document.getElementById('detail-name').textContent = currentLang === 'de' ? el.Element : t(el.Element);
 
     propertyContainer.innerHTML = '';
 
@@ -93,9 +145,12 @@ function showDetails(atomicNumber) {
 
         const item = document.createElement('div');
         item.className = 'property-item';
+        const translatedKey = t(key);
+        const translatedValue = (typeof value === 'string') ? t(value) : value;
+
         item.innerHTML = `
-            <div class="property-label">${key}</div>
-            <div class="property-value">${value}</div>
+            <div class="property-label">${translatedKey}</div>
+            <div class="property-value">${translatedValue}</div>
         `;
         propertyContainer.appendChild(item);
     });
@@ -104,7 +159,7 @@ function showDetails(atomicNumber) {
     if (el.NMR_Daten && el.NMR_Daten.length > 0) {
         const nmrSection = document.createElement('div');
         nmrSection.className = 'nmr-section';
-        nmrSection.innerHTML = `<h3>NMR Aktive Isotope</h3>`;
+        nmrSection.innerHTML = `<h3>${currentLang === 'de' ? 'NMR Aktive Isotope' : 'NMR Active Isotopes'}</h3>`;
 
         const nmrGrid = document.createElement('div');
         nmrGrid.className = 'nmr-grid';
@@ -118,14 +173,14 @@ function showDetails(atomicNumber) {
                 if (k === 'Isotop' || v === null) return;
                 propsHtml += `
                     <div class="property-item">
-                        <div class="property-label">${k}</div>
-                        <div class="property-value">${v}</div>
+                        <div class="property-label">${t(k)}</div>
+                        <div class="property-value">${(typeof v === 'string') ? t(v) : v}</div>
                     </div>
                 `;
             });
 
             isoCard.innerHTML = `
-                <div class="nmr-isotope-header">Isotop: <sup>${iso.Isotop}</sup>${el.Symbol}</div>
+                <div class="nmr-isotope-header">${t('Isotop')}: <sup>${iso.Isotop}</sup>${el.Symbol}</div>
                 <div class="nmr-props">
                     ${propsHtml}
                 </div>

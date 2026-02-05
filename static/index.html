@@ -16,9 +16,14 @@
             <div class="header-content">
                 <h1>Periodensystem der Elemente</h1>
                 <div class="controls">
-                    <input type="text" id="element-search" placeholder="Element suchen (Name oder Symbol)...">
+                    <div class="lang-switcher">
+                        <button class="lang-btn active" data-lang="de">DE</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <input type="text" id="element-search" placeholder="Element suchen (Name oder Symbol)..."
+                        data-i18n-placeholder="search_placeholder">
                     <div class="stats">
-                        <span id="element-count">0</span> Elemente geladen
+                        <span id="element-count">0</span> <span data-i18n="elements_loaded">Elemente geladen</span>
                     </div>
                 </div>
             </div>
@@ -45,6 +50,7 @@
         </main>
 
         <footer>
+            <p>short-URL: <a href="https://tinyurl.com/nmrpte">tinyurl.com/nmrpte</a></p>
             <p>Datenquellen:</p>
             <ul>
                 <li><a href="https://publications.iupac.org/pac/2001/pdf/7311x1795.pdf">Pure Appl. Chem., Vol. 73, No.

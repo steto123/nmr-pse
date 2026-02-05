@@ -65,6 +65,23 @@ def load_data():
         except Exception as e:
             print(f"NMR sheet error (expected if missing): {e}")
 
+        # Load translations if exists
+        translations = {}
+        try:
+            df_trans = pd.read_excel(EXCEL_FILE, sheet_name='denglish')
+            # Extract column names - they are also translation pairs
+            de_col = df_trans.columns[0]
+            en_col = df_trans.columns[1]
+            translations[de_col] = en_col
+            
+            for row in df_trans.to_dict(orient='records'):
+                de_val = row.get(de_col)
+                en_val = row.get(en_col)
+                if de_val and en_val:
+                    translations[str(de_val)] = str(en_val)
+        except Exception as e:
+            print(f"Translations sheet error: {e}")
+
         # Final merge
         final_data = []
         for row in elements_data:
@@ -76,15 +93,21 @@ def load_data():
                 clean_row['NMR_Daten'] = nmr_dict[oz]
             
             final_data.append(clean_row)
-        return final_data
+            
+        return {'elements': final_data, 'translations': translations}
     except Exception as e:
         print(f"Error loading Excel: {e}")
         return []
 
+@app.route('/api/data')
+def get_data():
+    data = load_data()
+    return jsonify(data)
+
 @app.route('/api/elements')
 def get_elements():
     data = load_data()
-    return jsonify(data)
+    return jsonify(data['elements'] if isinstance(data, dict) else data)
 
 @app.route('/')
 def index():
