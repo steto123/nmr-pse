@@ -38,13 +38,19 @@ function updateUI() {
             'search_placeholder': 'Element suchen (Name oder Symbol)...',
             'elements_loaded': 'Elemente geladen',
             'nmr_active_isotopes': 'NMR Aktive Isotope',
-            'title': 'Periodensystem der Elemente'
+            'title': 'Periodensystem der Elemente',
+            'tools': 'Tools',
+            'isotope_pattern': 'Isotopenmuster',
+            'molar_mass': 'Molmassenrechner'
         },
         'en': {
             'search_placeholder': 'Search element (Name or Symbol)...',
             'elements_loaded': 'Elements loaded',
             'nmr_active_isotopes': 'NMR Active Isotopes',
-            'title': 'Periodic Table of Elements'
+            'title': 'Periodic Table of Elements',
+            'tools': 'Tools',
+            'isotope_pattern': 'Isotope Pattern',
+            'molar_mass': 'Molar Mass Calculator'
         }
     };
 
@@ -53,6 +59,8 @@ function updateUI() {
     document.querySelector('h1').textContent = strings.title;
     document.getElementById('element-search').placeholder = strings.search_placeholder;
     document.querySelector('[data-i18n="elements_loaded"]').textContent = strings.elements_loaded;
+    document.querySelector('[data-i18n="tools"]').textContent = strings.tools;
+    document.querySelector('[data-i18n="isotope_pattern"]').textContent = strings.isotope_pattern;
 
     // Re-render the grid to update element names
     renderApp(elementsData);

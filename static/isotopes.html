@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isotopenmuster-Rechner | Massenspektrometrie</title>
+    <meta name="description"
+        content="Berechnen Sie Isotopenverteilungsmuster für chemische Formeln in der Massenspektrometrie. Grafische und tabellarische Darstellung.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tool-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .input-group label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        input[type="text"] {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        #calculate-btn {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        #calculate-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 400px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-color);
+        }
+
+        .error-msg {
+            color: #f87171;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="header-content">
+                <h1>Isotopenmuster-Rechner</h1>
+                <div class="nav-menu">
+                    <div class="dropdown">
+                        <button class="dropbtn">Tools</button>
+                        <div class="dropdown-content">
+                            <a href="molar_mass.html">Molmassenrechner</a>
+                            <a href="isotopes.html">Isotopenmuster</a>
+                            <a href="index.html">Periodensystem</a>
+                        </div>
+                    </div>
+                    <div class="lang-switcher"
+                        style="display: flex; gap: 0.5rem; background: var(--card-bg); padding: 0.25rem; border-radius: 9999px; border: 1px solid var(--border-color); margin-left:1rem;">
+                        <button class="lang-btn active" data-lang="de">DE</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main style="display: block; padding: 0 2rem;">
+            <div class="tool-container">
+                <p style="margin-bottom: 2rem; color: var(--text-secondary);" data-i18n="iso_desc">
+                    Geben Sie eine chemische Formel ein (z. B. C6H12O6 oder FeCl3), um das theoretische
+                    Isotopenverteilungsmuster für die Massenspektrometrie zu berechnen.
+                </p>
+
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="formula-input" data-i18n="chemical_formula">Chemische Formel</label>
+                        <input type="text" id="formula-input" placeholder="z. B. C6H12O6" value="C6H12O6">
+                        <div id="error-display" class="error-msg"></div>
+                    </div>
+                    <button id="calculate-btn" data-i18n="calculate">Berechnen</button>
+                </div>
+
+                <div class="results-section">
+                    <div class="chart-container">
+                        <canvas id="isotopeChart"></canvas>
+                    </div>
+                    <div class="table-container">
+                        <table id="results-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="mass">Masse (m/z)</th>
+                                    <th data-i18n="abundance">Häufigkeit (%)</th>
+                                    <th data-i18n="rel_intensity">Rel. Intensität (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Results will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 Interaktives Periodensystem | Isotopen-Tools</p>
+        </footer>
+    </div>
+
+    <script src="isotopes_data.js"></script>
+    <script src="isotopes_script.js"></script>
+</body>
+
+</html>

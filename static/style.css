@@ -117,6 +117,95 @@ h1 {
     background: rgba(255, 255, 255, 0.05);
 }
 
+.nav-menu {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+.dropdown:hover .dropbtn {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: var(--panel-bg);
+    min-width: 200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(var(--glass-blur));
+    z-index: 1000;
+    overflow: visible;
+    /* Changed from hidden to show the bridge */
+    padding: 0.5rem;
+}
+
+/* Bridge to keep hover active */
+.dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    /* Cover the gap + some buffer */
+    left: 0;
+    right: 0;
+    height: 15px;
+    background: transparent;
+}
+
+.dropdown-content a {
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.dropdown-content a:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 main {
     flex: 1;
     position: relative;

@@ -4,9 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktives Periodensystem der Elemente</title>
+    <title>Interaktives Periodensystem & NMR-Daten</title>
     <meta name="description"
-        content="Ein interaktives Periodensystem der Elemente, basierend auf aktuellen Daten aus einer Excel-Datei.">
+        content="Interaktives Periodensystem der Elemente mit detaillierten NMR-Isotopendaten, Atomgewichten und chemischen Eigenschaften.">
+    <meta property="og:title" content="Interaktives Periodensystem & NMR-Daten">
+    <meta property="og:description" content="Detaillierte Element-Informationen und NMR-Isotopendaten auf einen Blick.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,6 +20,15 @@
             <div class="header-content">
                 <h1>Periodensystem der Elemente</h1>
                 <div class="controls">
+                    <div class="nav-menu">
+                        <div class="dropdown">
+                            <button class="dropbtn" data-i18n="tools">Tools</button>
+                            <div class="dropdown-content">
+                                <a href="molar_mass.html" data-i18n="molar_mass">Molmassenrechner</a>
+                                <a href="isotopes.html" data-i18n="isotope_pattern">Isotopenmuster</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="lang-switcher">
                         <button class="lang-btn active" data-lang="de">DE</button>
                         <button class="lang-btn" data-lang="en">EN</button>
@@ -59,6 +72,9 @@
                 <li><a
                         href="https://github.com/harirakul/chemlib/tree/master/chemlib/resources">https://github.com/harirakul/chemlib/tree/master/chemlib/resources</a>
                 </li>
+                <li>Ernö Pretsch, Philippe Bühlmann, Martin Badertscher; Spektroskopische Daten zur Strukturaufklärung,
+                    Springer-Lehrbuch, DOI 10.1007/978-3-540-76866-1
+                <li>Wikipedia (https://de.wikipedia.org/wiki/Periodensystem)</li>
             </ul>
         </footer>
     </div>

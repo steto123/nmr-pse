@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molmassenrechner | Chemie-Tools</title>
+    <meta name="description"
+        content="Berechnen Sie die Molmasse, Exakte Masse und Nominalmasse für chemische Verbindungen.">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        input[type="text"] {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 1.25rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+        }
+
+        #calc-btn {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 1.1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #calc-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .mass-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .mass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .mass-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .mass-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .mass-unit {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-left: 0.25rem;
+        }
+
+        .composition-table {
+            margin-top: 3rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .composition-table th {
+            text-align: left;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .composition-table td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .error-msg {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="header-content">
+                <h1>Molmassenrechner</h1>
+                <div class="nav-menu">
+                    <div class="lang-switcher"
+                        style="display: flex; gap: 0.5rem; background: var(--card-bg); padding: 0.25rem; border-radius: 9999px; border: 1px solid var(--border-color); margin-left:1rem;">
+                        <button class="lang-btn active" data-lang="de">DE</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Tools</button>
+                        <div class="dropdown-content">
+                            <a href="molar_mass.html">Molmassenrechner</a>
+                            <a href="isotopes.html">Isotopenmuster</a>
+                            <a href="index.html">Periodensystem</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main style="display: block; padding: 0 2rem;">
+            <div class="tool-container">
+                <div id="error-display" class="error-msg"></div>
+
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="formula-input" data-i18n="chemical_formula">Chemische Formel</label>
+                        <input type="text" id="formula-input" placeholder="z. B. H2O, C6H12O6, H2SO4" value="C6H12O6">
+                    </div>
+                    <button id="calc-btn" data-i18n="calculate">Berechnen</button>
+                </div>
+
+                <div class="mass-results" id="results-display">
+                    <div class="mass-card">
+                        <div class="mass-label" data-i18n="molar_mass_avg" title="Summe der Durchschnittsmassen">
+                            Molmasse (Durchschnitt)</div>
+                        <div class="mass-value" id="val-avg">0.000</div>
+                        <span class="mass-unit">g/mol</span>
+                    </div>
+                    <div class="mass-card">
+                        <div class="mass-label" data-i18n="exact_mass"
+                            title="Summe der exakten Massen der häufigsten Isotope">Exakte Masse
+                        </div>
+                        <div class="mass-value" id="val-exact">0.000</div>
+                        <span class="mass-unit">Da</span>
+                    </div>
+                    <div class="mass-card">
+                        <div class="mass-label" data-i18n="nominal_mass"
+                            title="Summe der ganzzahligen Massen der häufigsten Isotope">
+                            Nominalmasse</div>
+                        <div class="mass-value" id="val-nominal">0</div>
+                        <span class="mass-unit">u</span>
+                    </div>
+                </div>
+
+                <table class="composition-table" id="comp-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="element">Element</th>
+                            <th data-i18n="amount">Anzahl</th>
+                            <th data-i18n="percentage">Anteil (Masse-%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Composition rows -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 Interaktives Periodensystem | Chemie-Tools</p>
+        </footer>
+    </div>
+
+    <script src="isotopes_data.js"></script>
+    <script src="molar_mass_script.js"></script>
+</body>
+
+</html>
