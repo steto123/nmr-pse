@@ -145,23 +145,101 @@ function showDetails(atomicNumber) {
 
     propertyContainer.innerHTML = '';
 
-    // 1. Main Properties
+    // 1. Grouped Properties
     const skipKeys = ['Atomnummer', 'Symbol', 'Element', 'Metall', 'Nichtmetall', 'Halbmetall', 'Typ', 'NMR_Daten'];
+    
+    const propertyGroups = {
+        'general': {
+            titleDE: 'Allgemein',
+            titleEN: 'General',
+            keys: ['Atommasse', 'Neutronen', 'Protonen', 'Elektronen', 'Periode', 'Gruppe', 'Aggregatzustand [RT]', 'Radioaktiv', 'Natur', 'Isotope', 'Entdecker', 'Jahr', 'CAS- Nummer', 'Herkunft Elementname', 'Massenzahl', 'Atomvolumen', 'Schalen', 'Valenzelektronen', 'Elektronenkonfiguration']
+        },
+        'physical': {
+            titleDE: 'Physikalische & Thermische Eigenschaften',
+            titleEN: 'Physical & Thermal Properties',
+            keys: ['Dichte [g/cm<sup>3</sup>]', 'Schmelzpunkt [K]', 'Siedpunkt [K]', 'Spezifische Wärmekapazität  [J*kg<sup>-1</sup>*K<sup>-1</sup>]', 'Molare Wärmekapazität [J/(mmol*K)]', 'Verdampfungswärme [kJ/mol]', 'Schmelzwärme [kJ/mol]', 'Bildungswärme [kJ/mol]', 'Wärmeleitfähigkeit [W/(m*K)]', 'Gitterkonstante [Angström]', 'Gitterstruktur']
+        },
+        'atomic': {
+            titleDE: 'Atomare & Strukturelle Eigenschaften',
+            titleEN: 'Atomic & Structural Properties',
+            keys: ['Atomradius [pm]', 'Elektronegativität (Pauling)', 'Erste Ionisierungsenergie [eV]', 'Dipol-Polarisierbarkeit', 'Dipol-Polarisierbarkeit  (Unsicherheit)', 'vdW-Radius [pm]', 'Kovalenzradius (C) [pm]', 'Kovalenzradius (P) [pm]', 'Elektronegativität (Pauling).1', 'Elektronegativität (Allen)', 'Protonenaffinität', 'Gasphasen-Basizität', 'C6-Dispersion', 'Kovalenzradiius (B) [pm]', 'vdW-Radius (Bondi) [pm]', 'VdW-Radius (Truhlar) [pm]', 'VdW-Radius (Alvarez) [pm]', 'VdW-Radius (Batsanov) [pm]', 'VdW-Radius (Dreiding) [pm]', 'vdW-Radius (UFF) [pm]', 'vdW-Radius (MM3) [pm]', 'Elektronegativität (Ghosh)', 'vdW-Radius (Alvarez) [pm]', 'C6-Dispersion (GB)', 'Atomradius (Rahm) [pm]', 'Metallradius [pm]', 'Metallradius (C12) [pm]', 'Kovalenzradius (Doppel) [pm]', 'Kovalenzradius (Dreifach) [pm]', 'Mendeleev Zahl', 'Dipol-Polarisierbarkeit (Unsicherheit)', 'Pettifor Zahl', 'Glawe Zahl', 'Elektronegativität (Miedema)', 'Miedema Molares Volumen', 'Miedema Elektrische Dichte', 'Elektronegativität (G-L)', 'Elektronegativität (R-B)']
+        },
+        'economy': {
+            titleDE: 'Vorkommen & Ökonomie',
+            titleEN: 'Occurrence & Economy',
+            keys: ['Massenanteil Erdhülle', 'Häufigkeit (Erdkruste -mg/kg)', 'Häufigkeit(Meerwasser - mg/l)', 'Geochemische Charakteristik', 'Goldschmidt-Klasse', 'Produktionskonz.', 'Versorgungsrisiko', 'Reservenverteilung', 'Stabilität Produzent', 'Stabilität Reserven', 'Top 3 Produzenten', 'Top 3 Reserven', 'Recycling Rate', 'Substituierbarkeit']
+        }
+    };
+
+    const groupedData = {
+        'general': [],
+        'physical': [],
+        'atomic': [],
+        'economy': [],
+        'other': []
+    };
 
     Object.entries(el).forEach(([key, value]) => {
-        if (skipKeys.includes(key) || value === null) return;
+        if (skipKeys.includes(key) || value === null || value === undefined || value === '') return;
 
-        const item = document.createElement('div');
-        item.className = 'property-item';
-        const translatedKey = t(key);
-        const translatedValue = (typeof value === 'string') ? t(value) : value;
+        let targetGroup = 'other';
+        if (propertyGroups.general.keys.includes(key)) targetGroup = 'general';
+        else if (propertyGroups.physical.keys.includes(key)) targetGroup = 'physical';
+        else if (propertyGroups.atomic.keys.includes(key)) targetGroup = 'atomic';
+        else if (propertyGroups.economy.keys.includes(key)) targetGroup = 'economy';
 
-        item.innerHTML = `
-            <div class="property-label">${translatedKey}</div>
-            <div class="property-value">${translatedValue}</div>
-        `;
-        propertyContainer.appendChild(item);
+        groupedData[targetGroup].push({key, value});
     });
+
+    propertyContainer.classList.remove('properties-grid');
+    propertyContainer.style.display = 'flex';
+    propertyContainer.style.flexDirection = 'column';
+    propertyContainer.style.gap = '2rem';
+
+    Object.keys(propertyGroups).forEach(groupId => {
+        if (groupedData[groupId].length === 0) return;
+        
+        const section = document.createElement('div');
+        section.className = 'property-section';
+        const title = currentLang === 'de' ? propertyGroups[groupId].titleDE : propertyGroups[groupId].titleEN;
+        section.innerHTML = `<h3>${title}</h3><div class="properties-grid properties-grid-dynamic"></div>`;
+        
+        const grid = section.querySelector('.properties-grid-dynamic');
+        groupedData[groupId].forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'property-item';
+            const translatedKey = t(item.key);
+            const translatedValue = (typeof item.value === 'string') ? t(item.value) : item.value;
+            div.innerHTML = `
+                <div class="property-label">${translatedKey}</div>
+                <div class="property-value">${translatedValue}</div>
+            `;
+            grid.appendChild(div);
+        });
+        propertyContainer.appendChild(section);
+    });
+
+    // Render 'other' group
+    if (groupedData.other.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'property-section';
+        const title = currentLang === 'de' ? 'Weitere Eigenschaften' : 'Other Properties';
+        section.innerHTML = `<h3>${title}</h3><div class="properties-grid properties-grid-dynamic"></div>`;
+        
+        const grid = section.querySelector('.properties-grid-dynamic');
+        groupedData.other.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'property-item';
+            const translatedKey = t(item.key);
+            const translatedValue = (typeof item.value === 'string') ? t(item.value) : item.value;
+            div.innerHTML = `
+                <div class="property-label">${translatedKey}</div>
+                <div class="property-value">${translatedValue}</div>
+            `;
+            grid.appendChild(div);
+        });
+        propertyContainer.appendChild(section);
+    }
 
     // 2. NMR Section
     if (el.NMR_Daten && el.NMR_Daten.length > 0) {
